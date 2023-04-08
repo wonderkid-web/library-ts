@@ -26,8 +26,6 @@ export default function Home() {
 
   const inputRef = useRef(null);
 
-  const bukuRef = collection(db, "buku");
-
   const getJenis = async () => {
     const jenisList: any = await getDoc(doc(db, "buku", "jenis"));
 
@@ -54,21 +52,6 @@ export default function Home() {
         console.error(e);
       });
   };
-
-  const getBuku = async () => {
-    onSnapshot(bukuRef, (docs) => {
-      // console.log(docs);
-      const boxBuku: Dokumen[] = [];
-      docs.forEach((d) => {
-        boxBuku.push({ ...d.data(), id: d.id });
-      });
-      // console.log(box);
-    });
-  };
-
-  useEffect(() => {
-    getBuku();
-  }, []);
 
   return (
     <main className="grid place-items-center">

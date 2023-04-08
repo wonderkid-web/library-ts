@@ -1,5 +1,6 @@
 "use client";
 import {
+  arrayRemove,
   arrayUnion,
   doc,
   getDoc,
@@ -9,7 +10,12 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../config/firebase";
 
-const TambahBuku = ({ blur }: any) => {
+interface BukuProps {
+  setBlur: Function;
+  updateData: string;
+}
+
+const UpdateBuku = ({ setBlur, updateData }: BukuProps) => {
   const [nama, setNama] = useState("");
   const [jenis, setJenis] = useState("");
   const [listJenis, setListJenis] = useState([]);
@@ -17,6 +23,14 @@ const TambahBuku = ({ blur }: any) => {
   const handleAddData = async (e: any) => {
     e.preventDefault();
     try {
+      const raw = await getDoc(doc(db, "buku", "rakBuku"));
+
+      updateDoc(doc(db, "buku", "rakBuku"), {
+        details: arrayRemove({
+          nama: updateData[0],
+          jenis: updateData[1],
+        }),
+      });
       updateDoc(doc(db, "buku", "rakBuku"), {
         details: arrayUnion({
           nama,
@@ -24,14 +38,13 @@ const TambahBuku = ({ blur }: any) => {
         }),
       });
       setNama("");
-      alert("data berhasil di tambah!");
+      setBlur(false);
+      console.log(updateData);
+      alert("data berhasil di Ubah!");
     } catch (e) {
       console.error(e);
     }
   };
-
-  // Mengambil list jenis buku
-
   const getList = async () => {
     try {
       const buku: any = await getDoc(doc(db, "buku", "jenis"));
@@ -50,8 +63,10 @@ const TambahBuku = ({ blur }: any) => {
     getList();
   }, []);
 
+  // Mengambil list jenis buku
+
   return (
-    <div className={blur ? "blur-sm" : "blur-none"}>
+    <div>
       <form className="border p-4 flex gap-4 w-fit mx-auto my-10">
         <input
           className="border rounded-md p-2"
@@ -84,4 +99,4 @@ const TambahBuku = ({ blur }: any) => {
   );
 };
 
-export default TambahBuku;
+export default UpdateBuku;
